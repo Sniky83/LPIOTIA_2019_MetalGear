@@ -1,6 +1,5 @@
 # coding: utf-8
  
-import logging
 import time
 import requests as r
 from threading import Thread, Event
@@ -11,10 +10,7 @@ from lib.bing_speech_api import BingSpeechAPI
 BING_KEY = '7ffd373b500f4ad498994103de1c865b'
 HOST = 'http://127.0.0.1:3000'
  
-def getQuantityFromString(bing):
-    #On ignore les accents car cela générait des problèmes
-    text = bing.encode('ascii','ignore')
-    
+def getQuantityFromString(text):    
     depCentimetre = dict()
     #Pour les centimetres
     depCentimetre['dix'] = 10
@@ -40,23 +36,25 @@ def getQuantityFromString(bing):
     depMetre['neuf'] = 900
     
     #mtre car on à enlevé les accents
-    if " mtre" in text:
+    if " mètre".decode('utf-8') in text:
         for cle in depMetre.keys():
             if cle in text:
-                print("clef existante")
+                print("Clé existante")
                 return str(depMetre[cle])
-        print("mètre reconnu mais pas de clef")
+        print("Mètre reconnu mais aucune clé")
  
     #centimtre car on à enlevé les accents
-    if " centimtre" in text:
+    if " centimètre".decode('utf-8') in text:
         for cle in depCentimetre.keys():
             if cle in text:
-                print("clef existante")
+                print("Clé existante")
                 return str(depCentimetre[cle])
-        print("centimètre reconnu mais pas de clef")
-    print("aucune action n'est reconnue")
-    #Dans le cas ou il ne se passe rien il renvoi 10 (en CM)
-    return '10'
+        print("Centimètre reconnu mais aucune clé")
+
+    print("Veuillez indiquer le type de mesure en METRE/CENTIMETRE et la quantité: se référencer à la fonction getQuantityFromString()")
+
+    #Dans le cas ou il ne se passe rien
+    return '0'
  
 def task(quit_event):
     mic = Microphone(quit_event=quit_event)
@@ -67,10 +65,12 @@ def task(quit_event):
             try:
                 text = bing.recognize(data)
                 if text:
-                    print('\n\nRecognized : %s\n' % text)
+                    print('\n\nTexte reconnu: %s\n' % text)
                     qty = getQuantityFromString(text)
-                    print("Quantite: " + qty)
-                if 'avance' in text:
+                    if qty == '0':
+                        continue
+                    print("Quantité: " + qty + "\n")
+                if 'avance ' in text:
                     API_ENDPOINT = HOST+"/movement/forward/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
@@ -102,11 +102,11 @@ def task(quit_event):
                     API_ENDPOINT = HOST+"/movement/twist/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
-                elif 'allume toi' in text:
+                elif 'allume-toi' in text:
                     API_ENDPOINT = HOST+"/action/wakeup"
                     res = r.get(API_ENDPOINT)
                     print(res)
-                elif 'calibre toi' in text:
+                elif 'calibre-toi' in text:
                     API_ENDPOINT = HOST+"/action/calibrate"
                     res = r.get(API_ENDPOINT)
                     print(res)
@@ -114,7 +114,7 @@ def task(quit_event):
                     API_ENDPOINT = HOST+"/movement/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
-                elif 'changes ta hauteur' in text:
+                elif 'change ta hauteur' in text:
                     API_ENDPOINT = HOST+"/height/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
@@ -122,11 +122,11 @@ def task(quit_event):
                     API_ENDPOINT = HOST+"/move/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
-                elif 'tourne toi' in text:
+                elif 'tourne-toi' in text:
                     API_ENDPOINT = HOST+"/rotate/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
-                elif 'dance' in text:
+                elif 'danse' in text:
                     API_ENDPOINT = HOST+"/dance/" + qty
                     res = r.get(API_ENDPOINT)
                     print(res)
@@ -134,7 +134,6 @@ def task(quit_event):
                 print(e.message)
  
 def main():
-    logging.basicConfig(level=logging.DEBUG)
     quit_event = Event()
     thread = Thread(target=task, args=(quit_event,))
     thread.start()

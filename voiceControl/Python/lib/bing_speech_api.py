@@ -120,7 +120,7 @@ class BingSpeechAPI:
         response = self.session.post(url, params=params, headers=headers, data=data)
 
         if response.status_code != 200:
-            raise RequestError("recognize http request error with status code {}".format(response.status_code))
+            raise RequestError("Recognize HTTP request error with status code {}".format(response.status_code))
 
         result = response.json()
 
