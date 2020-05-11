@@ -7,6 +7,7 @@ def sendHexapod(byte, crawl = False):
 	arr_list = [128, byte, 129]
 	msg = bytearray(arr_list)
 
+	#Il vaut true pour les actions movement/ car un mouvement = 2 actions
 	if crawl == True:
 		iteration = max(qty, 2)
 	else:
@@ -69,73 +70,73 @@ def action():
 		return 0
 	
 	if _type == "movement":
-		sendHexapod(110, True)
 		print("[crawl]")
+		sendHexapod(110, True)
 		return 0
 	
 	if _type == "movement/forward":
-		sendHexapod(80, True)
 		print("[crawlForward]")
+		sendHexapod(80, True)
 		return 0
 			
 	if _type == "movement/backward":
-		sendHexapod(82, True)
 		print("[crawlBackward]")
+		sendHexapod(82, True)
 		return 0
 
 	if _type == "movement/left":
-		sendHexapod(84, True)
 		print("[crawlLeft]")
+		sendHexapod(84, True)
 		return 0
 
 	if _type == "movement/right":
-		sendHexapod(86, True)
 		print("[crawlRight]")
+		sendHexapod(86, True)
 		return 0
 
 	if _type == "action/calibrate":
-		sendHexapod(32)
 		print("[calibrate]")
+		sendHexapod(32)
 		return 0
 
 	if _type == "action/wakeup":
-		sendHexapod(92)
 		print("[activeMode]")
+		sendHexapod(92)
 		return 0
 
 	if _type == "action/standby":
-		sendHexapod(94)
 		print("[sleepMode]")
+		sendHexapod(94)
 		return 0
 
 	if _type == "turn/left":
-		sendHexapod(88)
 		print("[turnRight]")
+		sendHexapod(88)
 		return 0
 
 	if _type == "turn/right":
-		sendHexapod(90)
 		print("[turnRight]")
+		sendHexapod(90)
 		return 0
 
 	if _type == "height":
-		sendHexapod(112)
 		print("[changeBodyHeight]")
+		sendHexapod(112)
 		return 0
 
 	if _type == "move":
-		sendHexapod(114)
 		print("[moveBody]")
+		sendHexapod(114)
 		return 0
 
 	if _type == "rotate":
-		sendHexapod(116)
 		print("[rotateBody]")
+		sendHexapod(116)
 		return 0
 
 	if _type == "twist":
-		sendHexapod(118)
 		print("[twistBody]")
+		sendHexapod(118)
 		return 0
 
 	#Dans le cas ou on rentre dans aucune condition
